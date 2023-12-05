@@ -29,7 +29,7 @@ model = AutoModelForCausalLM.from_pretrained(
 model.config.use_cache = False
 model.config.pretraining_tp = 1
 
-pipe = pipeline(task="text-generation", model=model, tokenizer=base_model, max_length=512)
+pipe = pipeline(task="text-generation", model=model, tokenizer=base_model, max_length=300)
 
 questions = pd.read_csv("questions.csv", sep=";")
 
@@ -45,6 +45,4 @@ for i, sample in tqdm.tqdm(questions.iterrows(), total=len(questions)):
     print(answer)
 
 answers = pd.DataFrame(answers, columns=["answer"])
-answers.to_csv("answers.csv", sep=";")
-
-print(questions)
+answers.to_csv("answers.csv", sep=";", index=False, quotechar="`")
