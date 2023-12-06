@@ -5,9 +5,12 @@ from openai import OpenAI
 
 MAX_LEN = 8000
 
+OPENAI_BASE_URL = "http://localhost:18888/v1"
+OPENAI_API_KEY = "sk-dummy"
+
 client = OpenAI(
-  base_url="http://localhost:18888/v1",
-  api_key="sk-dummy",
+  base_url=OPENAI_BASE_URL,
+  api_key=OPENAI_API_KEY,
 )
 
 dataset = load_dataset("lawful-good-project/ipc_decisions_4k")
@@ -33,7 +36,7 @@ for matter in tqdm.tqdm(short_matters):
         model="openchat_3.5",
         messages=[
             {"role": "system", "content": "Ты русскоязычный юридический консультант"},
-            {"role": "user", "content": "Кратко опиши, в чем суть дела"},
+            {"role": "user", "content": "Кратко опиши, в чем суть дела. Решение суда напиши в конце"},
             {"role": "user", "content": matter},
         ],
         temperature=0.5,
@@ -48,4 +51,4 @@ for matter in tqdm.tqdm(short_matters):
     summaries.append(summary)
 
 df = pd.DataFrame(summaries, columns=["text"])
-df.to_csv("summaries.csv", sep=";", index=False, quotechar="`")
+df.to_csv("train.csv", index=False)
