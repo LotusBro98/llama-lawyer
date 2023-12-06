@@ -42,14 +42,14 @@ answer_is_correct: true, если ответ answer верный и соглас
 
 
 CONTEXT_HINT = [
-    # {"role": "user", "content": "Ответь на вопрос по авторскому праву"},
-    # {"role": "assistant", "content": "Напишите вопрос, я выберу вариант ответа и обосную его"},
+    {"role": "user", "content": "Ответь на вопрос по авторскому праву"},
+    {"role": "assistant", "content": "Напишите вопрос, я выберу вариант ответа и кратко обосную его"},
 
     # {"role": "user", "content": "Помоги мне ответить на вопрос по авторскому праву"},
     # {"role": "assistant", "content": "Добрый день! В чем ваш вопрос?"},
 
-    {"role": "user", "content": "Мне нужна юридическая консультация"},
-    {"role": "assistant", "content": "Добрый день! Опишите ситуацию, чтобы я мог подсказать вам, как поступить."},
+    # {"role": "user", "content": "Мне нужна юридическая консультация"},
+    # {"role": "assistant", "content": "Добрый день! Опишите ситуацию, чтобы я мог подсказать вам, как поступить."},
 ]
 
 
@@ -59,7 +59,7 @@ pipe = pipeline(
     model=model,
     torch_dtype=torch.float16,
     device_map="auto",
-    max_length=1024
+    max_length=300
 )
 
 
@@ -107,7 +107,7 @@ def evaluate_answer(client: OpenAI, question: str, answer: str, correct_answer: 
     msg = response.choices[0].message.content
     msg = msg.replace("False", "false")
     msg = msg.replace("True", "true")
-    score, comment,  correct = msg.split("\n")
+    score, comment,  correct = msg.split("\n")[:3]
     correct = correct.split("answer_is_correct: ")[1]
     correct = bool(strtobool(correct))
     score = int(score.split("score: ")[1])
@@ -134,7 +134,7 @@ def evaluate_answers(questions: List[str], answers: List[str], correct_answers: 
 
 
 def evaluate():
-    benchmark = pd.read_csv("benchmark2.csv")
+    benchmark = pd.read_csv("benchmark1.csv")
     questions = benchmark["question"]
     correct_answers = benchmark["correct_answer"]
 
